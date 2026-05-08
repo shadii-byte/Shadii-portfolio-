@@ -1,0 +1,678 @@
+<!-- START admin.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shadii — Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --bg-warm: #f5f3ef;
+      --ink: #1a1a1a;
+      --ink-soft: #3d3d3d;
+      --ink-light: #6b6b6b;
+      --ink-muted: #9a9a9a;
+      --accent: #c0392b;
+      --accent-hover: #a93226;
+      --border: #e8e5e0;
+      --border-light: #f0ede8;
+      --white: #ffffff;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --shadow: 0 4px 24px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 48px rgba(0,0,0,0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+
+    .login-box {
+      background: var(--white);
+      padding: 3.5rem;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-box h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .login-box > p {
+      color: var(--ink-light);
+      font-size: 0.9rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-light);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 1.5px solid var(--border);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .error-msg {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      display: none;
+      font-weight: 500;
+    }
+
+    .dashboard {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      background: var(--ink);
+      color: var(--white);
+      padding: 2.5rem 2rem;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .sidebar nav a {
+      display: block;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      padding: 0.9rem 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      transition: var(--transition);
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+      color: var(--white);
+    }
+
+    .sidebar nav a.active {
+      font-weight: 500;
+    }
+
+    .sidebar .logout {
+      margin-top: 3rem;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .sidebar .logout:hover {
+      color: #fff;
+    }
+
+    .main-content {
+      margin-left: 280px;
+      padding: 3rem;
+      max-width: 900px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 500;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-light);
+    }
+
+    .panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      margin-bottom: 1.8rem;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+
+    .field-group {
+      margin-bottom: 1.8rem;
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-light);
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+
+    .field-group input,
+    .field-group textarea {
+      width: 100%;
+      padding: 0.9rem 1.1rem;
+      border: 1.5px solid var(--border);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      transition: var(--transition);
+      color: var(--ink);
+    }
+
+    .field-group input:focus,
+    .field-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+    }
+
+    .field-group textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .field-group small {
+      display: block;
+      color: var(--ink-muted);
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+    }
+
+    .btn-save {
+      background: var(--success);
+      color: var(--white);
+      border: none;
+      padding: 0.9rem 2.2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-save:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: var(--white);
+      border: none;
+      padding: 0.7rem 1.4rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+    }
+
+    .success-toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--success);
+      color: var(--white);
+      padding: 1rem 1.8rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: none;
+      z-index: 1000;
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(40px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .post-editor {
+      border: 1.5px solid var(--border);
+      padding: 1.8rem;
+      margin-bottom: 1rem;
+      background: var(--bg-warm);
+      border-radius: 8px;
+    }
+
+    .post-editor h4 {
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    .post-grid-editor {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: relative;
+        padding: 1.5rem;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+      .post-grid-editor {
+        grid-template-columns: 1fr;
+      }
+      .login-box {
+        padding: 2rem;
+        margin: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <h1>Shadii Admin</h1>
+      <p>Edit your portfolio content</p>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="passwordInput" placeholder="Enter admin password">
+      </div>
+      <button class="btn" onclick="login()">Enter Dashboard</button>
+      <p class="error-msg" id="errorMsg">Incorrect password</p>
+    </div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+    <div class="sidebar">
+      <h2>📝 Admin</h2>
+      <nav>
+        <a onclick="showSection('heroSection')" class="active" id="nav-hero">Hero Section</a>
+        <a onclick="showSection('aboutSection')" id="nav-about">About</a>
+        <a onclick="showSection('writingSection')" id="nav-writing">Writing Posts</a>
+        <a onclick="showSection('imagesSection')" id="nav-images">Images</a>
+        <a onclick="showSection('contactSection')" id="nav-contact">Contact & Socials</a>
+        <a onclick="showSection('newsletterAdminSection')" id="nav-newsletter-admin">Newsletter</a>
+        <a onclick="showSection('footerSection')" id="nav-footer">Footer</a>
+      </nav>
+      <a class="logout" onclick="logout()">← Back to Site</a>
+    </div>
+
+    <div class="main-content">
+
+      <div id="heroSection" class="panel-section">
+        <h2 class="section-title">Hero Section</h2>
+        <div class="panel">
+          <h3>Tagline & Title</h3>
+          <div class="field-group">
+            <label>Tagline</label>
+            <input type="text" id="heroTag">
+          </div>
+          <div class="field-group">
+            <label>Main Title (&lt;br&gt; for lines, &lt;em&gt; for italics)</label>
+            <textarea id="heroTitle"></textarea>
+          </div>
+          <div class="field-group">
+            <label>Introduction</label>
+            <textarea id="heroIntro"></textarea>
+          </div>
+          <div class="field-group">
+            <label>CTA Button Text</label>
+            <input type="text" id="heroCtaText">
+          </div>
+          <div class="field-group">
+            <label>CTA Button Link</label>
+            <input type="text" id="heroCtaLink">
+          </div>
+          <button class="btn-save" onclick="saveSection('hero')">Save Changes</button>
+        </div>
+      </div>
+
+      <div id="aboutSection" class="panel-section hidden">
+        <h2 class="section-title">About Section</h2>
+        <div class="panel">
+          <h3>Content</h3>
+          <div class="field-group">
+            <label>Section Label</label>
+            <input type="text" id="aboutLabel">
+          </div>
+          <div class="field-group">
+            <label>Heading</label>
+            <input type="text" id="aboutHeading">
+          </div>
+          <div class="field-group">
+            <label>Body Text (HTML: &lt;p&gt; tags for paragraphs)</label>
+            <textarea id="aboutText"></textarea>
+            <small>Wrap each paragraph in &lt;p&gt;...&lt;/p&gt;</small>
+          </div>
+          <button class="btn-save" onclick="saveSection('about')">Save Changes</button>
+        </div>
+      </div>
+
+      <div id="writingSection" class="panel-section hidden">
+        <h2 class="section-title">Writing Posts</h2>
+        <div class="panel">
+          <h3>Section Header</h3>
+          <div class="field-group">
+            <label>Label</label>
+            <input type="text" id="writingLabel">
+          </div>
+          <div class="field-group">
+            <label>Title</label>
+            <input type="text" id="writingTitle">
+          </div>
+          <div class="field-group">
+            <label>"See all posts" Text</label>
+            <input type="text" id="writingLinkText">
+          </div>
+          <div class="field-group">
+            <label>"See all posts" URL</label>
+            <input type="text" id="writingLinkUrl">
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Posts (up to 6)</h3>
+          <div id="postsEditor"></div>
+          <button class="btn-save" onclick="savePosts()" style="margin-top:1rem;">Save All Posts</button>
+        </div>
+      </div>
+
+      <div id="imagesSection" class="panel-section hidden">
+        <h2 class="section-title">Images</h2>
+        <div class="panel">
+          <h3>Replace Image URLs</h3>
+          <div class="field-group">
+            <label>Hero Image URL</label>
+            <input type="text" id="imgHero">
+            <small>Main large image on the right side</small>
+          </div>
+          <div class="field-group">
+            <label>About Section Image URL</label>
+            <input type="text" id="imgAbout">
+            <small>Left side image in About section</small>
+          </div>
+          <div class="field-group">
+            <label>Photo Strip 1 (large, left)</label>
+            <input type="text" id="imgStrip1">
+          </div>
+          <div class="field-group">
+            <label>Photo Strip 2 (middle)</label>
+            <input type="text" id="imgStrip2">
+          </div>
+          <div class="field-group">
+            <label>Photo Strip 3 (right)</label>
+            <input type="text" id="imgStrip3">
+          </div>
+          <button class="btn-save" onclick="saveImages()">Save Images</button>
+        </div>
+      </div>
+
+      <div id="contactSection" class="panel-section hidden">
+        <h2 class="section-title">Contact & Socials</h2>
+        <div class="panel">
+          <h3>Contact Info</h3>
+          <div class="field-group">
+            <label>Section Label</label>
+            <input type="text" id="contactLabel">
+          </div>
+          <div class="field-group">
+            <label>Heading</label>
+            <input type="text" id="contactHeading">
+          </div>
+          <div class="field-group">
+            <label>Description</label>
+            <textarea id="contactText"></textarea>
+          </div>
+          <div class="field-group">
+            <label>Email</label>
+            <input type="text" id="contactEmail">
+          </div>
+          <div class="field-group">
+            <label>Phone</label>
+            <input type="text" id="contactPhone">
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Social Links</h3>
+          <div class="field-group">
+            <label>Substack URL</label>
+            <input type="text" id="socialSubstackUrl">
+          </div>
+          <div class="field-group">
+            <label>Substack Display Text</label>
+            <input type="text" id="socialSubstackText">
+          </div>
+          <div class="field-group">
+            <label>Instagram URL</label>
+            <input type="text" id="socialInstagramUrl">
+          </div>
+          <div class="field-group">
+            <label>Instagram Handle</label>
+            <input type="text" id="socialInstagramText">
+          </div>
+          <div class="field-group">
+            <label>WhatsApp Number (with country code, e.g. 2547...)</label>
+            <input type="text" id="socialWhatsAppNumber">
+          </div>
+          <div class="field-group">
+            <label>WhatsApp Display Text</label>
+            <input type="text" id="socialWhatsAppText">
+          </div>
+          <button class="btn-save" onclick="saveContact()">Save Contact & Socials</button>
+        </div>
+      </div>
+
+      <div id="newsletterAdminSection" class="panel-section hidden">
+        <h2 class="section-title">Newsletter</h2>
+        <div class="panel">
+          <h3>Newsletter Content</h3>
+          <div class="field-group">
+            <label>Section Label</label>
+            <input type="text" id="newsletterLabel">
+          </div>
+          <div class="field-group">
+            <label>Title</label>
+            <input type="text" id="newsletterTitle">
+          </div>
+          <div class="field-group">
+            <label>Description</label>
+            <textarea id="newsletterText"></textarea>
+          </div>
+          <button class="btn-save" onclick="saveNewsletter()">Save Newsletter</button>
+        </div>
+
+        <div class="panel">
+          <h3>Subscribers (<span id="subscriberCount">0</span>)</h3>
+          <div class="field-group">
+            <label>Email List</label>
+            <textarea id="subscriberList" readonly style="min-height:200px; font-family: 'SF Mono', monospace; font-size: 0.85rem; background: var(--bg-warm);"></textarea>
+            <small>Export these emails to your Substack or email tool</small>
+          </div>
+          <button class="btn-danger" onclick="clearSubscribers()">Clear All Subscribers</button>
+        </div>
+      </div>
+
+      <div id="footerSection" class="panel-section hidden">
+        <h2 class="section-title">Footer</h2>
+        <div class="panel">
+          <h3>Footer Text</h3>
+          <div class="field-group">
+            <label>Name</label>
+            <input type="text" id="footerName">
+          </div>
+          <div class="field-group">
+            <label>Location</label>
+            <input type="text" id="footerLocation">
+          </div>
+          <div class="field-group">
+            <label>Year</label>
+            <input type="text" id="footerYear">
+          </div>
+          <button class="btn-save" onclick="saveFooter()">Save Footer</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="success-toast" id="toast">✓ Saved successfully</div>
+
+  <script>
+    const ADMIN_PASSWORD = 'shadii2025';
+
+    function login() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === ADMIN_PASSWORD) {
+        localStorage.setItem('cms_auth', 'true');
+        showDashboard();
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('cms_auth');
+      window.location.href = 'index.html';
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadAllFields();
+    }
+
+    if (localStorage.getItem('cms_auth') === 'true') {
+      showDashboard();
+    }
+
+    document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') login();
+    });
+
+    function showSection(id) {
+      document.querySelectorAll('.panel-section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+      document.getElementById('nav-' + id.replace('Section', '').replace('Admin', '-admin')).classList.add('active');
+    }
+
+    function loadAllFields() {
+      document.getElementById('heroTag').value = getStored('cms_heroTag', 'Patrick Shadrack Wanjohi');
+      document.getElementById('heroTitle').value = getStored('cms_heroTitle', 'I think.\\nI write.\\nI <em>build.</em>');
+      document.getElementById('heroIntro').value = getStored('cms_heroIntro', 'A Kenyan thinker putting words to the things we all feel but rarely say out loud. Engineering student. Builder. Pan-African at heart.');
+
+      const ctaSaved = getStored('cms_heroCtaLink', 'Read my writing →|https://shadii254.substack.com');
+      const ctaParts = ctaSaved.split('|');
+      document.getElementById('heroCtaText').value = ctaParts[
